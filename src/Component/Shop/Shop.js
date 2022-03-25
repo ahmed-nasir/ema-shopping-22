@@ -21,13 +21,13 @@ const Shop = () => {
     useEffect(() => {
         console.log('Local Storage first line', products)
         const storedCart = getStoredCart()
-        const savedCart =[];
+        const savedCart = [];
         // console.log(storedCart)
         for (const id in storedCart) {
             const addedProduct = products.find(product => product.id === id);
             if (addedProduct) {
                 const quantity = storedCart[id];
-                addedProduct.quantity=quantity;
+                addedProduct.quantity = quantity;
                 savedCart.push(addedProduct);
             }
         }
@@ -35,11 +35,22 @@ const Shop = () => {
         // console.log(' local Storage finished')
     }, [products])
 
-    const handelAddToCart = (product) => {
-        console.log(product)
-        const newCart = [...cart, product];
+    const handelAddToCart = (selectedProduct) => {
+        console.log(selectedProduct)
+
+        let newCart = [];
+        const exists = cart.find(product => product.id === selectedProduct.id)
+        if (!exists) {
+            selectedProduct.quantity = 1;
+            newCart = [...cart, selectedProduct];
+        } else {
+            const rest = cart.filter(product => product.id !== selectedProduct.id);
+            exists.quantity = exists.quantity + 1;
+            newCart = [...rest, exists];
+        }
+
         setCart(newCart);
-        addToDb(product.id);
+        addToDb(selectedProduct.id);
     }
 
     return (
